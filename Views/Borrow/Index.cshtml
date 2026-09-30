@@ -1,0 +1,73 @@
+@model IEnumerable<BorrowRecord>
+@{
+    ViewData["Title"] = "Borrow / Return";
+    var currentStatus = ViewData["CurrentStatus"] as string;
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="fa-solid fa-right-left"></i> Borrow / Return Records</h2>
+    <a asp-action="Create" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Issue Book</a>
+</div>
+
+<div class="btn-group mb-3" role="group">
+    <a asp-action="Index" class="btn btn-outline-secondary @(string.IsNullOrEmpty(currentStatus) ? "active" : "")">All</a>
+    <a asp-action="Index" asp-route-status="active" class="btn btn-outline-primary @(currentStatus == "active" ? "active" : "")">Active</a>
+    <a asp-action="Index" asp-route-status="overdue" class="btn btn-outline-danger @(currentStatus == "overdue" ? "active" : "")">Overdue</a>
+    <a asp-action="Index" asp-route-status="returned" class="btn btn-outline-success @(currentStatus == "returned" ? "active" : "")">Returned</a>
+</div>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-striped mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Book</th>
+                    <th>Member</th>
+                    <th>Borrow Date</th>
+                    <th>Due Date</th>
+                    <th>Return Date</th>
+                    <th>Status</th>
+                    <th>Fine</th>
+                    <th style="width: 140px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="7" class="text-center text-muted py-3">No records found.</td></tr>
+                }
+                @foreach (var r in Model)
+                {
+                    <tr>
+                        <td>@r.Book?.Title</td>
+                        <td>@r.Member?.FullName</td>
+                        <td>@r.BorrowDate.ToString("MMM dd, yyyy")</td>
+                        <td>@r.DueDate.ToString("MMM dd, yyyy")</td>
+                        <td>@(r.ReturnDate.HasValue ? r.ReturnDate.Value.ToString("MMM dd, yyyy") : "-")</td>
+                        <td>
+                            <span class="badge @(r.IsReturned ? "badge-status-returned" : (r.IsOverdue ? "badge-status-overdue" : "badge-status-borrowed"))">
+                                @r.Status
+                            </span>
+                        </td>
+                        <td>
+                            @if (r.Fine > 0)
+                            {
+                                <span class="text-danger fw-bold">₹@r.Fine.ToString("0.00")</span>
+                            }
+                            else
+                            {
+                                <span class="text-muted">—</span>
+                            }
+                        </td>
+                        <td>
+                            @if (!r.IsReturned)
+                            {
+                                <a asp-action="Return" asp-route-id="@r.Id" class="btn btn-sm btn-outline-success"><i class="fa-solid fa-rotate-left"></i> Return</a>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

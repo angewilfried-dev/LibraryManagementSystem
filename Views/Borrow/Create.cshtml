@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Issue Book";
+    var books = ViewBag.Books as List<Book>;
+    var members = ViewBag.Members as List<Member>;
+}
+
+<h2><i class="fa-solid fa-right-left"></i> Issue Book to Member</h2>
+
+<div class="card">
+    <div class="card-body">
+        <form asp-action="Create" method="post">
+            <div asp-validation-summary="All" class="text-danger"></div>
+
+            <div class="mb-3">
+                <label class="form-label">Book</label>
+                <select name="bookId" class="form-select" required>
+                    <option value="">-- Select an available book --</option>
+                    @if (books != null)
+                    {
+                        @foreach (var b in books)
+                        {
+                            <option value="@b.Id">@b.Title (@b.AvailableCopies available)</option>
+                        }
+                    }
+                </select>
+                @if (books == null || !books.Any())
+                {
+                    <div class="form-text text-danger">No books currently have available copies.</div>
+                }
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Member</label>
+                <select name="memberId" class="form-select" required>
+                    <option value="">-- Select a member --</option>
+                    @if (members != null)
+                    {
+                        @foreach (var m in members)
+                        {
+                            <option value="@m.Id">@m.FullName (@m.Email)</option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Loan Period (days)</label>
+                <input type="number" name="loanDays" class="form-control" value="14" min="1" max="90" />
+            </div>
+
+            <button type="submit" class="btn btn-primary"><i class="fa-solid fa-check"></i> Issue Book</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,95 @@
+@model LibraryManagementSystem.Controllers.DashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2 class="mb-4"><i class="fa-solid fa-gauge"></i> Dashboard</h2>
+
+<div class="row g-3 mb-4">
+    <div class="col-md-4 col-lg-2-4" style="flex: 0 0 20%; max-width: 20%;">
+        <div class="card card-stat bg-stat-1 p-3">
+            <div class="stat-value">@Model.DistinctTitles</div>
+            <div>Book Titles</div>
+        </div>
+    </div>
+    <div class="col-md-4" style="flex: 0 0 20%; max-width: 20%;">
+        <div class="card card-stat bg-stat-2 p-3">
+            <div class="stat-value">@Model.TotalBooks</div>
+            <div>Total Copies</div>
+        </div>
+    </div>
+    <div class="col-md-4" style="flex: 0 0 20%; max-width: 20%;">
+        <div class="card card-stat bg-stat-3 p-3">
+            <div class="stat-value">@Model.TotalMembers</div>
+            <div>Members</div>
+        </div>
+    </div>
+    <div class="col-md-4" style="flex: 0 0 20%; max-width: 20%;">
+        <div class="card card-stat bg-stat-4 p-3">
+            <div class="stat-value">@Model.BooksCurrentlyBorrowed</div>
+            <div>Currently Borrowed</div>
+        </div>
+    </div>
+    <div class="col-md-4" style="flex: 0 0 20%; max-width: 20%;">
+        <div class="card card-stat bg-stat-5 p-3">
+            <div class="stat-value">@Model.OverdueCount</div>
+            <div>Overdue</div>
+        </div>
+    </div>
+</div>
+
+@if (Model.OutstandingFines > 0)
+{
+    <div class="alert alert-warning d-flex align-items-center mb-4">
+        <i class="fa-solid fa-coins me-2"></i>
+        <div><strong>₹@Model.OutstandingFines.ToString("0.00")</strong> in overdue fines currently outstanding across @Model.OverdueCount loan(s).</div>
+    </div>
+}
+
+<div class="d-flex gap-2 mb-4">
+    <a asp-controller="Books" asp-action="Create" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Book</a>
+    <a asp-controller="Members" asp-action="Create" class="btn btn-outline-primary"><i class="fa-solid fa-user-plus"></i> Add Member</a>
+    <a asp-controller="Borrow" asp-action="Create" class="btn btn-outline-success"><i class="fa-solid fa-right-left"></i> Issue Book</a>
+</div>
+
+<div class="card">
+    <div class="card-header bg-white">
+        <strong><i class="fa-solid fa-clock-rotate-left"></i> Recent Activity</strong>
+    </div>
+    <div class="card-body p-0">
+        @if (!Model.RecentBorrows.Any())
+        {
+            <p class="p-3 text-muted mb-0">No borrow activity yet.</p>
+        }
+        else
+        {
+            <table class="table table-striped mb-0">
+                <thead>
+                    <tr>
+                        <th>Book</th>
+                        <th>Member</th>
+                        <th>Borrow Date</th>
+                        <th>Due Date</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var r in Model.RecentBorrows)
+                    {
+                        <tr>
+                            <td>@r.Book?.Title</td>
+                            <td>@r.Member?.FullName</td>
+                            <td>@r.BorrowDate.ToString("MMM dd, yyyy")</td>
+                            <td>@r.DueDate.ToString("MMM dd, yyyy")</td>
+                            <td>
+                                <span class="badge @(r.IsReturned ? "badge-status-returned" : (r.IsOverdue ? "badge-status-overdue" : "badge-status-borrowed"))">
+                                    @r.Status
+                                </span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

@@ -1,0 +1,47 @@
+@model BorrowRecord
+@{
+    ViewData["Title"] = "Return Book";
+}
+
+<h2><i class="fa-solid fa-rotate-left"></i> Return Book</h2>
+
+<div class="card mb-3">
+    <div class="card-body">
+        <dl class="row mb-0">
+            <dt class="col-sm-3">Book</dt>
+            <dd class="col-sm-9">@Model.Book?.Title</dd>
+
+            <dt class="col-sm-3">Member</dt>
+            <dd class="col-sm-9">@Model.Member?.FullName</dd>
+
+            <dt class="col-sm-3">Borrow Date</dt>
+            <dd class="col-sm-9">@Model.BorrowDate.ToString("MMM dd, yyyy")</dd>
+
+            <dt class="col-sm-3">Due Date</dt>
+            <dd class="col-sm-9">
+                @Model.DueDate.ToString("MMM dd, yyyy")
+                @if (Model.IsOverdue)
+                {
+                    <span class="badge badge-status-overdue ms-2">Overdue</span>
+                }
+            </dd>
+
+            @if (Model.Fine > 0)
+            {
+                <dt class="col-sm-3">Fine Due</dt>
+                <dd class="col-sm-9 text-danger fw-bold">
+                    ₹@Model.Fine.ToString("0.00")
+                    <div class="text-muted fw-normal small">
+                        @Model.OverdueDays day(s) overdue &times; ₹@LibraryManagementSystem.Helpers.LibrarySettings.FinePerDayOverdue.ToString("0.00") per day
+                    </div>
+                </dd>
+            }
+        </dl>
+    </div>
+</div>
+
+<form asp-action="Return" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-success"><i class="fa-solid fa-check"></i> Confirm Return</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

@@ -1,0 +1,57 @@
+@model IEnumerable<Member>
+@{
+    ViewData["Title"] = "Members";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="fa-solid fa-users"></i> Members</h2>
+    <a asp-action="Create" class="btn btn-primary"><i class="fa-solid fa-user-plus"></i> Add Member</a>
+</div>
+
+<form asp-action="Index" method="get" class="row g-2 mb-3">
+    <div class="col-auto flex-grow-1">
+        <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search by name or email..." />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-secondary"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-striped mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Full Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Membership</th>
+                    <th>Joined On</th>
+                    <th style="width: 220px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-3">No members found.</td></tr>
+                }
+                @foreach (var member in Model)
+                {
+                    <tr>
+                        <td>@member.FullName</td>
+                        <td>@member.Email</td>
+                        <td>@member.Phone</td>
+                        <td>@member.MembershipType</td>
+                        <td>@member.JoinedOn.ToString("MMM dd, yyyy")</td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@member.Id" class="btn btn-sm btn-outline-info" title="Details"><i class="fa-solid fa-eye"></i></a>
+                            <a asp-action="Edit" asp-route-id="@member.Id" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                            <a asp-action="Delete" asp-route-id="@member.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

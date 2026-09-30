@@ -1,0 +1,66 @@
+@model IEnumerable<Book>
+@{
+    ViewData["Title"] = "Books";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h2><i class="fa-solid fa-book"></i> Book Catalog</h2>
+    <a asp-action="Create" class="btn btn-primary"><i class="fa-solid fa-plus"></i> Add Book</a>
+</div>
+
+<form asp-action="Index" method="get" class="row g-2 mb-3">
+    <div class="col-auto flex-grow-1">
+        <input type="text" name="searchString" value="@ViewData["CurrentFilter"]" class="form-control" placeholder="Search by title, author, or ISBN..." />
+    </div>
+    <div class="col-auto">
+        <button type="submit" class="btn btn-outline-secondary"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+        <a asp-action="Index" class="btn btn-outline-secondary">Clear</a>
+    </div>
+</form>
+
+<div class="card">
+    <div class="table-responsive">
+        <table class="table table-striped mb-0 align-middle">
+            <thead>
+                <tr>
+                    <th>Title</th>
+                    <th>Author</th>
+                    <th>ISBN</th>
+                    <th>Category</th>
+                    <th>Available / Total</th>
+                    <th style="width: 220px;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (!Model.Any())
+                {
+                    <tr><td colspan="6" class="text-center text-muted py-3">No books found.</td></tr>
+                }
+                @foreach (var book in Model)
+                {
+                    <tr>
+                        <td>@book.Title</td>
+                        <td>@book.Author</td>
+                        <td>@book.ISBN</td>
+                        <td>@book.Category</td>
+                        <td>
+                            @if (book.AvailableCopies > 0)
+                            {
+                                <span class="badge bg-success">@book.AvailableCopies / @book.TotalCopies</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">0 / @book.TotalCopies</span>
+                            }
+                        </td>
+                        <td>
+                            <a asp-action="Details" asp-route-id="@book.Id" class="btn btn-sm btn-outline-info" title="Details"><i class="fa-solid fa-eye"></i></a>
+                            <a asp-action="Edit" asp-route-id="@book.Id" class="btn btn-sm btn-outline-primary" title="Edit"><i class="fa-solid fa-pen"></i></a>
+                            <a asp-action="Delete" asp-route-id="@book.Id" class="btn btn-sm btn-outline-danger" title="Delete"><i class="fa-solid fa-trash"></i></a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
